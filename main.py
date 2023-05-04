@@ -75,7 +75,8 @@ def GMM(aimg, n_colors=4):
 
 def GMMs(imgs, n_colors=4):
     results = []
-    for img in imgs:
+    for num, img in enumerate(imgs):
+        print(f'Image {num}')
         results.append(GMM(img, n_colors))
     return results
 
@@ -83,23 +84,29 @@ def GMMs(imgs, n_colors=4):
 def test_n_n(imgs, img_name, n=[2, 3, 6]):
     n_len = len(n)
     img_len = len(imgs)
-    fig, axes = plt.subplots(n_len + 2, img_len, figsize=(img_len * 2, (n_len + 1) * 2))
+    fig, axes = plt.subplots(img_len, n_len + 2, figsize=((n_len + 1) * 3.6, img_len * 3.6))
+    col_titles = ['Original'] + [f'GMM with {clusters} clusters' for clusters in n] + ['Color Histogram']
+    for idx, title in enumerate(col_titles):
+        plt.figtext(0.5 / (n_len + 2) + idx / (n_len + 2), 0.99, title, ha='center', va='top', fontsize=12,
+                    fontweight='bold')  # 加粗：fontweight='bold'
 
     # 显示原始图像
     for idx, img in enumerate(imgs):
-        axes[0, idx].imshow(img)
-        axes[0, idx].set_title(f'{img_name[idx]} - Original')
-        axes[0, idx].axis('off')
+        axes[idx, 0].imshow(img)
+        axes[idx, 0].set_title(f'image {idx}')
+        axes[idx, 0].axis('off')
 
     # 对于每个 n，显示 GMM 结果
     for i, clusters in enumerate(n):
         print(f'GMM with {clusters} clusters')
-        results = GMMs(imgs, clusters)
+        results = []
+        # results = GMMs(imgs, clusters)
         for j, result in enumerate(results):
-            print(f'Image {j}')
-            axes[i + 1, j].imshow(result)
-            axes[i + 1, j].set_title(f'{img_name[j]} - GMM with {clusters} clusters')
-            axes[i + 1, j].axis('off')
+            # print(f'Image {j}')
+            axes[j, i + 1].imshow(result)
+            axes[j, i + 1].set_title(f'image {j}')
+            axes[j, i + 1].axis('off')
+    print('GMM complete')
 
     # 计算并显示每个图像颜色曲线
     for idx, img in enumerate(imgs):
@@ -109,14 +116,14 @@ def test_n_n(imgs, img_name, n=[2, 3, 6]):
         colors, counts = myt.Draw.img.color_curve(temp_img)
 
         # 显示颜色曲线
-        axes[n_len + 1, idx].stackplot(colors, counts, colors=['r', 'g', 'b'])
-        axes[n_len + 1, idx].set_xlim([0, 255])
-        # axes[n_len + 1, idx].set_ylim([0, 10000])
-        axes[n_len + 1, idx].set_xlabel('Pixel Intensity')
-        axes[n_len + 1, idx].set_ylabel('Frequency')
-        axes[n_len + 1, idx].set_title(f'{img_name[idx]} - Color Histogram')
+        axes[idx, n_len + 1].stackplot(colors, counts, colors=['r', 'g', 'b'])
+        axes[idx, n_len + 1].set_xlim([0, 255])
+        # axes[idx, n_len + 1].set_ylim([0, 10000])
+        axes[idx, n_len + 1].set_xlabel('Pixel Intensity')
+        axes[idx, n_len + 1].set_ylabel('Frequency')
+        axes[idx, n_len + 1].set_title(f'image {idx}\n - Color Histogram')
 
-    plt.tight_layout()
+    plt.tight_layout(pad=1.5)
     plt.show()
 
 
