@@ -100,7 +100,7 @@ def test_n_n(imgs, img_name, n=[2, 3, 6]):
     for i, clusters in enumerate(n):
         print(f'GMM with {clusters} clusters')
         results = []
-        # results = GMMs(imgs, clusters)
+        results = GMMs(imgs, clusters)
         for j, result in enumerate(results):
             # print(f'Image {j}')
             axes[j, i + 1].imshow(result)
